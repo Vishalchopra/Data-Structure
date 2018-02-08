@@ -21,6 +21,7 @@ struct ListNode {
 void InsertInLinkList(struct ListNode**, int, int);
 void DisplayLinkList(struct ListNode *);
 void DeleteNodeFromLinkList(struct ListNode **, int);
+struct ListNode* MergeLists(struct ListNode *, struct ListNode*);
 
 int main()
 {
@@ -169,6 +170,32 @@ void DeleteNodeFromLinkList(struct ListNode **head, int position)
 		p->next = q->next;
 }
 
+/*========================Merge two sorted array==================================*/
+struct ListNode* MergeLists(struct ListNode *headA, struct ListNode* headB)
+{
+    struct ListNode *temp1, *temp2, *temp, list;
+    temp = &list;
+    temp1 = headA;
+    temp2 = headB;
+    while (1){
+        if (temp1 && (temp2 == NULL || temp1->data <= temp2->data)){
+                temp->next = (struct ListNode *)malloc(sizeof(*temp));
+                temp->next->data = temp1->data;
+                temp = temp->next;
+                temp1 = temp1->next;
+            } else if(temp2){
+                temp->next = (struct ListNode *)malloc(sizeof(*temp));
+                temp->next->data = temp2->data;
+                temp = temp->next;
+                temp2 = temp2->next;
+            }
+            
+        if (!temp1 && !temp2)
+            break;
+    }
+    temp = list.next;
+    return temp;
+}
 /*void DeleteNode(struct ListNode **head)
 {
 	struct ListNode
