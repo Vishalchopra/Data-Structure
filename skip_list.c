@@ -78,8 +78,8 @@ void insertElement(int data)
 	temp = list.header;
 
 	for (i = list.listLevel; i >= 0; i--){
-		while (temp ->next[i] != list.header && temp->next[i]->data < data);
-		temp = temp->next[i];
+		while (temp ->next[i] != list.header && temp->next[i]->data < data)
+			temp = temp->next[i];
 		update[i] = temp;
 	}
 	temp = temp->next[0];
