@@ -9,6 +9,7 @@ enum{
 	DELETE_BEG,
 	DELETE_POS,
 	DELETE_END,
+	PRINT_N_FROM_END,
 	EXIT=10
 };
 
@@ -21,10 +22,12 @@ struct ListNode {
 void InsertInLinkList(struct ListNode**, int, int);
 void DisplayLinkList(struct ListNode *);
 void DeleteNodeFromLinkList(struct ListNode **, int);
+struct ListNode* MergeLists(struct ListNode *, struct ListNode*);
+void PrintNthNodeFromLast(struct ListNode *, int);
 
 int main()
 {
-	struct ListNode *startNode;
+	struct ListNode *startNode = NULL;
 	while (1){
 		int choice;
 		printf("Enter the choice\n");
@@ -35,6 +38,7 @@ int main()
 		printf("Press 5 for Deletion in the starting\n");
 		printf("Press 6 for Deletion in any postion\n");
 		printf("Press 7 for Deletion in the End\n");
+		printf("Press 8 for Print nth node from end\n");
 		printf("Press 10 for Exit\n");
 		scanf("%d", &choice);
 
@@ -60,7 +64,16 @@ int main()
 			DeleteNodeFromLinkList(&startNode, choice);
 		}
 		break;
+		case PRINT_N_FROM_END:
+		{
+			int n;
+			printf("Enter the node you want to print\n");
+			scanf("%d", &n);
+			PrintNthNodeFromLast(startNode, n);
+		}
+		break;
 		case EXIT:
+			printf("Need to improve more come back again\n");
 			//DeleteLinkList(startNode);
 			return 0;
 
@@ -77,7 +90,7 @@ void InsertInLinkList(struct ListNode **startNode, int data, int position)
 	
 	new = (struct ListNode *)malloc(sizeof(struct ListNode));
 	new->data = data;
-	if (position == 1){
+	if (position == INSERTION_BEG){
 		new->next = *startNode;
 		*startNode = new;
 		return ;
@@ -88,7 +101,7 @@ void InsertInLinkList(struct ListNode **startNode, int data, int position)
 		return ;
 	}
 	p = *startNode;
-	if (position == 2){
+	if (position == INSERTION_POS){
 		int pos;
 		printf ("Enter the postion\n");
 		scanf("%d", &pos);
@@ -133,14 +146,14 @@ void DeleteNodeFromLinkList(struct ListNode **head, int position)
 	}
 	struct ListNode *p, *q;
 	p = *head;
-	if (position == 5){
+	if (position == DELETE_BEG){
 		(*head) = (*head)->next;
 		free(p);
 		p = NULL;
 		return ;
 	}
 
-	if (position == 6){
+	if (position == DELETE_POS){
 		int pos;
 		printf("Enter the position\n");
 		scanf("%d", &pos);
@@ -153,7 +166,7 @@ void DeleteNodeFromLinkList(struct ListNode **head, int position)
 			p = p->next;
 		}
 	}else{
-		while (p->next->next != NULL){
+		while (p->next != NULL && p->next->next != NULL){
 			p = p->next;
 		}
 	}
@@ -161,14 +174,72 @@ void DeleteNodeFromLinkList(struct ListNode **head, int position)
 
 	q = p->next;
 	if (q == NULL){
-		p->next = q;
-		free (q);
-		q = NULL;
+		free (*head);
+		(*head) = NULL;
+		return ;
 	}
-	else
-		p->next = q->next;
+	p->next = q->next;
+	free (q);
+	q = NULL;
 }
 
+/*========================Merge two sorted array==================================*/
+struct ListNode* MergeLists(struct ListNode *headA, struct ListNode* headB)
+{
+    struct ListNode *temp1, *temp2, *temp, list;
+    temp = &list;
+    temp1 = headA;
+    temp2 = headB;
+    while (1){
+        if (temp1 && (temp2 == NULL || temp1->data <= temp2->data)){
+                temp->next = (struct ListNode *)malloc(sizeof(*temp));
+                temp->next->data = temp1->data;
+                temp = temp->next;
+                temp1 = temp1->next;
+            } else if(temp2){
+                temp->next = (struct ListNode *)malloc(sizeof(*temp));
+                temp->next->data = temp2->data;
+                temp = temp->next;
+                temp2 = temp2->next;
+            }
+            
+        if (!temp1 && !temp2)
+            break;
+    }
+    temp = list.next;
+    return temp;
+}
+
+
+/*========================Print nth Node from end==================================*/
+void PrintNthNodeFromLast(struct ListNode *start, int n)
+{
+	struct ListNode *temp;
+	if (start == NULL){
+		printf("List is empty\n");
+		return;
+	}
+	int count = 1;
+	temp = start;
+	
+	while (count < n){
+		temp = temp->next;
+		if (temp == NULL){
+			printf("%d is greater than the length of the Linklist\n", n);
+			return ;
+		}
+		count++;
+	}
+	while (temp != NULL){
+		if (temp->next == NULL){
+			printf("%d is %d node from the last node\n", start->data, n);
+			return;
+		}
+		start = start->next;
+		temp = temp->next;
+	}
+
+}
 /*void DeleteNode(struct ListNode **head)
 {
 	struct ListNode

@@ -88,7 +88,7 @@ void InsertInLinkList(struct ListNode **startNode, int data, int position)
 	}
 	
 	if (*startNode == NULL){
-		printf ("List is empty\n");
+		printf ("List is empty\nFirst Insert at the begining :)\n");
 		return ;
 	}
 	p = *startNode;
@@ -164,19 +164,26 @@ void DeleteNodeFromLinkList(struct ListNode **head, int position)
 			p = p->next;
 		}
 	}else{
-		while (p->next->next != NULL){
+		while (p->next != NULL && p->next->next != NULL){
 			p = p->next;
 		}
 	}
 
 
 	q = p->next;
+	if (q == NULL){
+		free (*head);
+		(*head) = NULL;
+		return ;
+	}
+
 	p->next = q->next;
 	if (q->next != NULL){
 		q->next->prev = p;
 	}
 	free(q);
 	q = NULL;
+	return ;
 }
 
 /*void DeleteNode(struct ListNode **head)
