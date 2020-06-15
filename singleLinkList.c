@@ -10,7 +10,10 @@ enum{
 	DELETE_POS,
 	DELETE_END,
 	PRINT_N_FROM_END,
-	EXIT=10
+	PRINT_MIDDLE_NODE,
+	PRINT_REVERSE,
+	REVERSE_LIST,
+	EXIT,
 };
 
 struct ListNode {
@@ -24,6 +27,65 @@ void DisplayLinkList(struct ListNode *);
 void DeleteNodeFromLinkList(struct ListNode **, int);
 struct ListNode* MergeLists(struct ListNode *, struct ListNode*);
 void PrintNthNodeFromLast(struct ListNode *, int);
+void displayMiddleNode(struct ListNode *);
+void reverseList(struct ListNode **);
+void printReverseList(struct ListNode *);
+
+//=======================Print List in reverse order======================
+void printReverseList(struct ListNode *head)
+{
+	if (head == NULL){
+		return;
+	}
+	printReverseList(head->next);
+	printf("%d---->", head->data);
+}
+
+
+/*==========================Reverse Linklist========================*/
+void reverseList(struct ListNode **head)
+{
+	struct ListNode *next, *prev, *head1;
+	prev = NULL;
+	head1= *head;
+	if (!head){
+		printf("List is empty");
+		return;
+	}
+
+	while(head1->next){
+		next = head1->next;
+		head1->next = prev;
+		prev = head1;
+		head1 = next;
+	}
+	head1->next = prev;
+	*head = head1;
+
+}
+
+//==========================Middle Node=============================
+void displayMiddleNode(struct ListNode *head)
+{
+	struct ListNode *loopNode;
+	if (head == NULL){
+		printf("List is empty. Please insert new node and try again\n");
+		return;
+	}
+	DisplayLinkList(head);
+	loopNode = head;
+	while(loopNode->next && loopNode->next->next){
+		head = head->next;
+		loopNode = loopNode->next->next;
+	}
+
+	if (!loopNode->next)
+		printf("\nOdd numbers of nodes present in linklist\n");
+	else
+		printf("\nEven numbers of nodes present in linklist\n");
+
+	printf("\nMiddle node of linklist is %d at address = %p\n", head->data, head);
+}
 
 int main()
 {
@@ -39,7 +101,10 @@ int main()
 		printf("Press 6 for Deletion in any postion\n");
 		printf("Press 7 for Deletion in the End\n");
 		printf("Press 8 for Print nth node from end\n");
-		printf("Press 10 for Exit\n");
+		printf("Press 9 for Print nth node from end\n");
+		printf("Press 10 for Print in reverse order\n");
+		printf("Press 11 for Reverse LinkList\n");
+		printf("Press 12 for Exit\n");
 		scanf("%d", &choice);
 
 		switch (choice){
@@ -71,6 +136,15 @@ int main()
 			scanf("%d", &n);
 			PrintNthNodeFromLast(startNode, n);
 		}
+		break;
+		case PRINT_MIDDLE_NODE:
+			displayMiddleNode(startNode);
+		break;
+		case PRINT_REVERSE:
+			printReverseList(startNode);	
+		break;
+		case REVERSE_LIST:
+			reverseList(&startNode);
 		break;
 		case EXIT:
 			printf("Need to improve more come back again\n");
