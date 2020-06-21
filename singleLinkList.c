@@ -13,6 +13,9 @@ enum{
 	PRINT_MIDDLE_NODE,
 	PRINT_REVERSE,
 	REVERSE_LIST,
+	REVERSE_PAIR,
+	REVERSE_KNODES,
+	ODD_EVEN_SEPARATE,
 	EXIT,
 };
 
@@ -30,7 +33,151 @@ void PrintNthNodeFromLast(struct ListNode *, int);
 void displayMiddleNode(struct ListNode *);
 void reverseList(struct ListNode **);
 void printReverseList(struct ListNode *);
+struct ListNode * reversePair(struct ListNode *);
+struct ListNode *reverseKnodesList(struct ListNode *);
+int checkNodesExits(struct ListNode *, int);
+struct ListNode *reverseKnodes(struct ListNode *, int);
+struct ListNode *oddEveneSeparate(struct ListNode *);
 
+//=======================================FUNCTION IMPLEMENTATION============================
+
+
+struct ListNode *oddEveneSeparate(struct ListNode *start)
+{
+	if (start == NULL){
+		printf("List is empty. Please add some elements and try again\n");
+		return NULL;
+	}
+	struct ListNode *tempEven,*tempEvenloop, *tempOdd, *tempOddloop;
+	tempEven = NULL;
+	tempOdd = NULL;
+		
+	while (NULL != start){
+		if (start->data & 1){
+			if (NULL == tempOdd){
+				tempOddloop = start;
+				tempOdd = start;
+			}else{
+				tempOddloop->next = start;
+				tempOddloop = tempOddloop->next;
+			}
+		
+		}else{
+			if (NULL == tempEven){
+				tempEvenloop = start;
+				tempEven = start;
+			}else{
+				tempEvenloop->next = start;
+				tempEvenloop = tempEvenloop->next;
+			}
+		
+		}
+		start = start->next;
+	}
+	if (tempEven == NULL){
+		return tempOdd;
+	} else if(tempOdd == NULL){
+		return tempEven;
+	
+	}else{
+
+		start = tempEven;
+		tempEvenloop->next = tempOdd;
+		tempOddloop->next = NULL;
+	}
+	return start;
+
+
+}
+
+//========================Reverse blocks of k nodes in linksit==============================
+
+struct ListNode *reverseKnodes(struct ListNode *start, int K)
+{
+	struct ListNode *next, *prev, *temp;
+	temp = start;
+	while(K--){
+		next = start->next;
+		start->next = prev;
+		prev = start;
+		start = next;
+	
+	}
+	temp->next = start; ///updating the first node->next with the Kth node + 1 address
+
+	return prev;
+
+
+}
+
+int checkNodesExits(struct ListNode *current, int K)
+{
+	while(K--){
+		if(current==NULL)
+			return 0;
+		current = current->next;
+	}	
+	return 1;
+}
+
+struct ListNode *reverseKnodesList(struct ListNode *head)
+{
+	int K, val, flag = 1;
+	struct ListNode *start, *temp, *newHead, *prev;
+	start = head;
+	newHead = head;
+	if (!head){
+		printf("Linklist is empty. Nothing to reverse in this\n");
+		return NULL;
+	}
+	printf("Enter the number of blocks you want to reverse\n");
+	scanf("%d", &K);
+
+	if (!K && K == 1){
+		printf("Enter number greater than 2\n");
+		return head;
+	}
+	while(start){
+		val = checkNodesExits(start, K);	
+		if (val == 0 ){
+			break;
+		}
+		temp = reverseKnodes(start, K);
+
+		if (flag){
+			newHead = temp;
+			flag = 0;
+		}else{
+			prev->next = temp;
+		}
+
+		prev = start;
+		start = start->next;
+
+	}
+	return newHead;
+}
+
+
+//========================Reverse Pair=====================
+struct ListNode * reversePair(struct ListNode *head){
+	struct ListNode *head1, *temp, *current;
+	current = head;
+	head1 = NULL, temp = NULL;
+	if (head->next)
+		head1 = head->next;
+	
+	while (head && head->next){
+		if (temp)
+			temp->next->next = head->next;
+		temp = head->next;
+		head->next = temp->next;
+		temp->next = head;
+		head = head->next;
+	}
+
+	return head1;
+}
 //=======================Print List in reverse order======================
 void printReverseList(struct ListNode *head)
 {
@@ -104,7 +251,10 @@ int main()
 		printf("Press 9 for Print nth node from end\n");
 		printf("Press 10 for Print in reverse order\n");
 		printf("Press 11 for Reverse LinkList\n");
-		printf("Press 12 for Exit\n");
+		printf("Press 12 for Reverse LinkList in pairs\n");
+		printf("Press 13 for Reverse LinkList in k nodes Block\n");
+		printf("Press 14 for Separate odd and even in a LinkList\n");
+		printf("Press 15 for Exit\n");
 		scanf("%d", &choice);
 
 		switch (choice){
@@ -146,6 +296,15 @@ int main()
 		case REVERSE_LIST:
 			reverseList(&startNode);
 		break;
+		case REVERSE_PAIR:
+			startNode = reversePair(startNode);
+		break;
+		case REVERSE_KNODES:
+			startNode = reverseKnodesList(startNode);
+		break;
+		case ODD_EVEN_SEPARATE:
+			startNode = oddEveneSeparate(startNode);
+		break;
 		case EXIT:
 			printf("Need to improve more come back again\n");
 			//DeleteLinkList(startNode);
@@ -164,6 +323,7 @@ void InsertInLinkList(struct ListNode **startNode, int data, int position)
 	
 	new = (struct ListNode *)malloc(sizeof(struct ListNode));
 	new->data = data;
+	new->next = NULL;
 	if (position == INSERTION_BEG){
 		new->next = *startNode;
 		*startNode = new;
